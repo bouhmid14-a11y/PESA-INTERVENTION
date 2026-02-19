@@ -1,3 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>PESA Intervention</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+body{font-family:Arial;padding:20px;background:#f4f6f9}
+button{padding:12px 20px;background:#1f4ed8;color:white;border:none;border-radius:8px}
+.card{background:white;padding:15px;margin-top:10px;border-radius:10px}
+</style>
+</head>
+
+<body>
+
+<h2>PESA Intervention</h2>
+<button onclick="ajouter()">+ Ajouter intervention</button>
+
+<div id="list"></div>
+
 <script>
 const supabase = window.supabase.createClient(
 "https://gdwwbwymcoolbjfzmqeq.supabase.co",
@@ -9,14 +30,14 @@ const station = prompt("Station ?");
 const tech = prompt("Technicien ?");
 if(!station || !tech) return alert("Informations manquantes");
 
-await supabase.from("interventions").insert([
-{
-id: Date.now(),
-station:station,
-tech:tech,
-statut:"Ouvert"
+const {error} = await supabase
+.from("interventions")
+.insert([{station:station, tech:tech}]);
+
+if(error){
+alert("Erreur: "+error.message);
+return;
 }
-]);
 
 charger();
 }
@@ -27,17 +48,23 @@ const {data,error} = await supabase
 .select("*")
 .order("id",{ascending:false});
 
-if(error){ alert(error.message); return; }
+if(error){
+document.getElementById("list").innerHTML="Erreur chargement";
+return;
+}
 
 document.getElementById("list").innerHTML="";
 data.forEach(i=>{
 document.getElementById("list").innerHTML += `
 <div class="card">
 <b>${i.station}</b> - ${i.tech}<br>
-${i.statut}
+${i.statut || "Ouvert"}
 </div>`;
 });
 }
 
 charger();
 </script>
+
+</body>
+</html>
