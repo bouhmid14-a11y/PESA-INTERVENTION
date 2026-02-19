@@ -1,3 +1,17 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>PESA Intervention</title>
+</head>
+
+<body style="font-family:Arial; padding:20px">
+
+<h2>PESA Intervention</h2>
+
+<button onclick="ajouterIntervention()">➕ Ajouter intervention</button>
+<button onclick="lister()">📋 Lister console</button>
+
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
 import { 
@@ -35,6 +49,14 @@ window.ajouterIntervention = async () => {
   alert("✅ Intervention ajoutée");
 };
 
+window.lister = async () => {
+  const querySnapshot = await getDocs(collection(db, "interventions"));
+  querySnapshot.forEach(doc => console.log(doc.id, doc.data()));
+};
+</script>
+
+</body>
+</html>
 window.lister = async () => {
   const querySnapshot = await getDocs(collection(db, "interventions"));
   console.log("Interventions:");
