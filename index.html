@@ -1,7 +1,11 @@
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
-import { getFirestore, collection, addDoc, getDocs, updateDoc, doc } 
-from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
+import { 
+  getFirestore, 
+  collection, 
+  addDoc,
+  getDocs
+} from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBgWsofAHCmhBE9Aduchj-WCKEtc_q8h-I",
@@ -15,10 +19,25 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-window.db = db;
-window.collection = collection;
-window.addDoc = addDoc;
-window.getDocs = getDocs;
-window.updateDoc = updateDoc;
-window.doc = doc;
-</script>
+window.ajouterIntervention = async () => {
+  const station = prompt("Station ?");
+  const tech = prompt("Technicien ?");
+  
+  if(!station || !tech) return alert("معلومات ناقصة");
+
+  await addDoc(collection(db, "interventions"), {
+    station,
+    tech,
+    date: new Date(),
+    status: "ouvert"
+  });
+
+  alert("✅ Intervention ajoutée");
+};
+
+window.lister = async () => {
+  const querySnapshot = await getDocs(collection(db, "interventions"));
+  console.log("Interventions:");
+  querySnapshot.forEach(doc => console.log(doc.id, doc.data()));
+};
+  </script>
