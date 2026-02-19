@@ -1,123 +1,24 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PESA Intervention</title>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
+import { getFirestore, collection, addDoc, getDocs, updateDoc, doc } 
+from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
 
-<style>
-body{
-font-family: Arial, sans-serif;
-background:#f4f6f9;
-margin:0;
-padding:15px;
-}
+const firebaseConfig = {
+  apiKey: "AIzaSyBgWsofAHCmhBE9Aduchj-WCKEtc_q8h-I",
+  authDomain: "pesa-d4add.firebaseapp.com",
+  projectId: "pesa-d4add",
+  storageBucket: "pesa-d4add.firebasestorage.app",
+  messagingSenderId: "1040180713793",
+  appId: "1:1040180713793:web:cc99650fd4875e3a3969c0"
+};
 
-h1{
-text-align:center;
-color:#0d47a1;
-}
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
-button{
-background:#0d47a1;
-color:white;
-border:none;
-padding:12px;
-border-radius:8px;
-width:100%;
-font-size:16px;
-margin-top:10px;
-}
-
-.ticket{
-background:white;
-padding:12px;
-border-radius:10px;
-margin-top:10px;
-box-shadow:0 2px 6px rgba(0,0,0,0.1);
-}
-
-.status{
-font-size:13px;
-margin-top:5px;
-}
-
-.open{color:orange;}
-.done{color:green;}
-</style>
-</head>
-
-<body>
-
-<h1>PESA Intervention</h1>
-
-<button onclick="addTicket()">➕ Ajouter intervention</button>
-
-<div id="list"></div>
-
-<script>
-let tickets = JSON.parse(localStorage.getItem("tickets")||"[]");
-
-function save(){
-localStorage.setItem("tickets",JSON.stringify(tickets));
-render();
-}
-
-function addTicket(){
-let station=prompt("Station ?");
-if(!station) return;
-
-let tech=prompt("Technicien ?");
-if(!tech) return;
-
-let id="INT-"+new Date().getFullYear()+"-"+(tickets.length+1);
-
-tickets.unshift({
-id,station,tech,
-status:"En attente",
-comment:""
-});
-
-save();
-}
-
-function comment(i){
-let c=prompt("Commentaire technicien");
-if(c){
-tickets[i].comment=c;
-tickets[i].status="En cours";
-save();
-}
-}
-
-function closeTicket(i){
-if(confirm("Clôturer ?")){
-tickets[i].status="Clôturé";
-save();
-}
-}
-
-function render(){
-let html="";
-tickets.forEach((t,i)=>{
-html+=`
-<div class="ticket">
-<b>${t.id}</b><br>
-Station: ${t.station}<br>
-Tech: ${t.tech}<br>
-<div class="status ${t.status=='Clôturé'?'done':'open'}">${t.status}</div>
-${t.comment?'<small>'+t.comment+'</small><br>':''}
-
-<button onclick="comment(${i})">Commentaire</button>
-<button onclick="closeTicket(${i})">Clôturer</button>
-</div>
-`;
-});
-document.getElementById("list").innerHTML=html;
-}
-
-render();
+window.db = db;
+window.collection = collection;
+window.addDoc = addDoc;
+window.getDocs = getDocs;
+window.updateDoc = updateDoc;
+window.doc = doc;
 </script>
-
-</body>
-</html>
