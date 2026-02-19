@@ -3,54 +3,51 @@
 <head>
 <meta charset="UTF-8">
 <title>PESA Intervention</title>
+<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+
+<style>
+body{font-family:Arial;padding:20px;background:#f2f4f8}
+button{padding:12px 20px;margin:5px;border:none;border-radius:8px;background:#1e3a8a;color:#fff}
+.card{background:#fff;padding:15px;margin-top:10px;border-radius:10px}
+</style>
 </head>
 
-<body style="font-family:Arial;padding:20px">
+<body>
 
 <h2>PESA Intervention</h2>
+<button onclick="add()">+ Ajouter intervention</button>
 
-<button onclick="ajouterIntervention()">Ajouter intervention</button>
-<button onclick="lister()">Lister console</button>
+<div id="list"></div>
 
-<script type="module">
+<script>
+const supabase = window.supabase.createClient(
+"https://YOURPROJECT.supabase.co",
+"YOURKEY"
+);
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
-import { getFirestore, collection, addDoc, getDocs } 
-from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
+async function add(){
+const station = prompt("Station ?");
+const tech = prompt("Technicien ?");
+if(!station||!tech)return;
 
-const firebaseConfig = {
-  apiKey: "AIzaSyBgWsofAHCmhBE9Aduchj-WCKEtc_q8h-I",
-  authDomain: "pesa-d4add.firebaseapp.com",
-  projectId: "pesa-d4add",
-  storageBucket: "pesa-d4add.firebasestorage.app",
-  messagingSenderId: "1040180713793",
-  appId: "1:1040180713793:web:cc99650fd4875e3a3969c0"
-};
+await supabase.from('interventions').insert([{station,tech,statut:"ouvert"}]);
+load();
+}
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+async function load(){
+let {data} = await supabase.from('interventions').select('*').order('id',{ascending:false});
+document.getElementById("list").innerHTML="";
+data.forEach(i=>{
+document.getElementById("list").innerHTML+=`
+<div class="card">
+<b>${i.station}</b><br>
+Tech: ${i.tech}<br>
+Statut: ${i.statut}
+</div>`;
+});
+}
 
-window.ajouterIntervention = async () => {
-  const station = prompt("Station ?");
-  const tech = prompt("Technicien ?");
-  
-  if(!station || !tech) return alert("Infos manquantes");
-
-  await addDoc(collection(db, "interventions"), {
-    station,
-    tech,
-    date: new Date(),
-    status: "ouvert"
-  });
-
-  alert("Intervention ajoutée");
-};
-
-window.lister = async () => {
-  const snap = await getDocs(collection(db, "interventions"));
-  snap.forEach(d => console.log(d.id, d.data()));
-};
-
+load();
 </script>
 
 </body>
