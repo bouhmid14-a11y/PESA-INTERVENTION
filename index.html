@@ -1,11 +1,123 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
 <head>
-  <title>PESA Intervention</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PESA Intervention</title>
+
+<style>
+body{
+font-family: Arial, sans-serif;
+background:#f4f6f9;
+margin:0;
+padding:15px;
+}
+
+h1{
+text-align:center;
+color:#0d47a1;
+}
+
+button{
+background:#0d47a1;
+color:white;
+border:none;
+padding:12px;
+border-radius:8px;
+width:100%;
+font-size:16px;
+margin-top:10px;
+}
+
+.ticket{
+background:white;
+padding:12px;
+border-radius:10px;
+margin-top:10px;
+box-shadow:0 2px 6px rgba(0,0,0,0.1);
+}
+
+.status{
+font-size:13px;
+margin-top:5px;
+}
+
+.open{color:orange;}
+.done{color:green;}
+</style>
 </head>
-<body style="font-family:Arial;text-align:center;margin-top:40px;">
-  <h1>PESA Intervention</h1>
-  <p>Plateforme de gestion des interventions</p>
-  <button>Ajouter intervention</button>
+
+<body>
+
+<h1>PESA Intervention</h1>
+
+<button onclick="addTicket()">➕ Ajouter intervention</button>
+
+<div id="list"></div>
+
+<script>
+let tickets = JSON.parse(localStorage.getItem("tickets")||"[]");
+
+function save(){
+localStorage.setItem("tickets",JSON.stringify(tickets));
+render();
+}
+
+function addTicket(){
+let station=prompt("Station ?");
+if(!station) return;
+
+let tech=prompt("Technicien ?");
+if(!tech) return;
+
+let id="INT-"+new Date().getFullYear()+"-"+(tickets.length+1);
+
+tickets.unshift({
+id,station,tech,
+status:"En attente",
+comment:""
+});
+
+save();
+}
+
+function comment(i){
+let c=prompt("Commentaire technicien");
+if(c){
+tickets[i].comment=c;
+tickets[i].status="En cours";
+save();
+}
+}
+
+function closeTicket(i){
+if(confirm("Clôturer ?")){
+tickets[i].status="Clôturé";
+save();
+}
+}
+
+function render(){
+let html="";
+tickets.forEach((t,i)=>{
+html+=`
+<div class="ticket">
+<b>${t.id}</b><br>
+Station: ${t.station}<br>
+Tech: ${t.tech}<br>
+<div class="status ${t.status=='Clôturé'?'done':'open'}">${t.status}</div>
+${t.comment?'<small>'+t.comment+'</small><br>':''}
+
+<button onclick="comment(${i})">Commentaire</button>
+<button onclick="closeTicket(${i})">Clôturer</button>
+</div>
+`;
+});
+document.getElementById("list").innerHTML=html;
+}
+
+render();
+</script>
+
 </body>
 </html>
