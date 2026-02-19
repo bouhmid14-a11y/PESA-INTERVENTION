@@ -1,25 +1,22 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html>
 <head>
 <meta charset="UTF-8">
 <title>PESA Intervention</title>
 </head>
 
-<body style="font-family:Arial; padding:20px">
+<body style="font-family:Arial;padding:20px">
 
 <h2>PESA Intervention</h2>
 
-<button onclick="ajouterIntervention()">➕ Ajouter intervention</button>
-<button onclick="lister()">📋 Lister console</button>
+<button onclick="ajouterIntervention()">Ajouter intervention</button>
+<button onclick="lister()">Lister console</button>
 
 <script type="module">
+
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
-import { 
-  getFirestore, 
-  collection, 
-  addDoc,
-  getDocs
-} from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
+import { getFirestore, collection, addDoc, getDocs } 
+from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBgWsofAHCmhBE9Aduchj-WCKEtc_q8h-I",
@@ -37,7 +34,7 @@ window.ajouterIntervention = async () => {
   const station = prompt("Station ?");
   const tech = prompt("Technicien ?");
   
-  if(!station || !tech) return alert("معلومات ناقصة");
+  if(!station || !tech) return alert("Infos manquantes");
 
   await addDoc(collection(db, "interventions"), {
     station,
@@ -46,20 +43,15 @@ window.ajouterIntervention = async () => {
     status: "ouvert"
   });
 
-  alert("✅ Intervention ajoutée");
+  alert("Intervention ajoutée");
 };
 
 window.lister = async () => {
-  const querySnapshot = await getDocs(collection(db, "interventions"));
-  querySnapshot.forEach(doc => console.log(doc.id, doc.data()));
+  const snap = await getDocs(collection(db, "interventions"));
+  snap.forEach(d => console.log(d.id, d.data()));
 };
+
 </script>
 
 </body>
 </html>
-window.lister = async () => {
-  const querySnapshot = await getDocs(collection(db, "interventions"));
-  console.log("Interventions:");
-  querySnapshot.forEach(doc => console.log(doc.id, doc.data()));
-};
-  </script>
