@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <title>PESA Intervention</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <style>
 body{font-family:Arial;padding:20px;background:#f4f6f9}
 button{padding:12px 20px;background:#1f4ed8;color:white;border:none;border-radius:8px}
@@ -29,12 +30,21 @@ const station = prompt("Station ?");
 const tech = prompt("Technicien ?");
 if(!station || !tech) return alert("Informations manquantes");
 
-await supabase.from("interventions").insert([{station,tech}]);
+await supabase.from("interventions").insert([
+{station:station, tech:tech, statut:"Ouvert"}
+]);
+
 charger();
 }
 
 async function charger(){
-const {data} = await supabase.from("interventions").select("*").order("id",{ascending:false});
+const {data,error} = await supabase
+.from("interventions")
+.select("*")
+.order("id",{ascending:false});
+
+if(error){ alert(error.message); return; }
+
 document.getElementById("list").innerHTML="";
 data.forEach(i=>{
 document.getElementById("list").innerHTML += `
