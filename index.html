@@ -1,53 +1,79 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
 <head>
 <meta charset="UTF-8">
 <title>PESA Intervention</title>
-<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-body{font-family:Arial;padding:20px;background:#f2f4f8}
-button{padding:12px 20px;margin:5px;border:none;border-radius:8px;background:#1e3a8a;color:#fff}
-.card{background:#fff;padding:15px;margin-top:10px;border-radius:10px}
+body{
+  font-family:Arial;
+  background:#f4f6f9;
+  padding:20px;
+}
+h1{color:#1e3a8a}
+button{
+  background:#1e3a8a;
+  color:white;
+  border:none;
+  padding:10px 15px;
+  margin:5px;
+  border-radius:6px;
+}
+.card{
+  background:white;
+  padding:15px;
+  border-radius:8px;
+  margin-top:10px;
+  box-shadow:0 2px 6px rgba(0,0,0,0.1);
+}
 </style>
 </head>
 
 <body>
 
-<h2>PESA Intervention</h2>
-<button onclick="add()">+ Ajouter intervention</button>
+<h1>PESA Intervention</h1>
+<button onclick="ajouter()">+ Ajouter intervention</button>
 
 <div id="list"></div>
 
 <script>
 const supabase = window.supabase.createClient(
-"https://YOURPROJECT.supabase.co",
-"YOURKEY"
+  "https://gdwwbwymcoolbjfzmqeq.supabase.co",
+  "sb_publishable_NT8hPP9TDUIH0SCnQa0XQw_UXdWELAl"
 );
 
-async function add(){
-const station = prompt("Station ?");
-const tech = prompt("Technicien ?");
-if(!station||!tech)return;
+async function ajouter(){
+  const station = prompt("Station ?");
+  const tech = prompt("Technicien ?");
+  if(!station || !tech) return;
 
-await supabase.from('interventions').insert([{station,tech,statut:"ouvert"}]);
-load();
+  await supabase.from("interventions").insert([
+    { station, tech, status:"ouvert" }
+  ]);
+
+  charger();
 }
 
-async function load(){
-let {data} = await supabase.from('interventions').select('*').order('id',{ascending:false});
-document.getElementById("list").innerHTML="";
-data.forEach(i=>{
-document.getElementById("list").innerHTML+=`
-<div class="card">
-<b>${i.station}</b><br>
-Tech: ${i.tech}<br>
-Statut: ${i.statut}
-</div>`;
-});
+async function charger(){
+  const { data } = await supabase.from("interventions").select("*").order("id",{ascending:false});
+
+  const div = document.getElementById("list");
+  div.innerHTML="";
+
+  data.forEach(i=>{
+    div.innerHTML += `
+      <div class="card">
+        <b>INT-${i.id}</b><br>
+        Station: ${i.station}<br>
+        Tech: ${i.tech}<br>
+        Status: ${i.status}
+      </div>
+    `;
+  });
 }
 
-load();
+charger();
 </script>
 
 </body>
